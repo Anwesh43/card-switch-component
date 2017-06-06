@@ -53,6 +53,21 @@ class Card {
         context.scale(this.scale,this.scale)
         context.fillRect(-w/2,-w/2,w,w)
         context.restore()
+        context.fillStyle = 'white'
+        context.font = context.font.replace(/\d{2}/,`${w/5}`)
+        if(!this.parts) {
+            this.parts = []
+            const textParts = this.message.split(" ")
+            var x = w/2,y = w/2 - (w/10)*textParts.length/2
+            textParts.forEach((textPart)=>{
+                this.parts.push(new TextMessage(textPart,x-context.measureText(textPart).width/2,y))
+                y += w/10
+            })
+        }
+        console.log(this.parts)
+        this.parts.forEach((part)=>{
+            part.draw(context)
+        })
         this.img.src = canvas.toDataURL()
     }
     setDir(dir) {
@@ -96,6 +111,17 @@ class SwitchAnimationHandler {
             }
 
         },50)
+    }
+}
+class TextMessage {
+    constructor(text,x,y) {
+        this.x = x
+        this.text = text
+        this.y = y
+    }
+    draw(context) {
+        //console.log(this.text)
+        context.fillText(this.text,this.x,this.y)
     }
 }
 customElements.define('card-switch',CardSwitchComponent)
