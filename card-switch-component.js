@@ -2,7 +2,7 @@ const w = window.innerWidth,h = window.innerHeight
 class CardSwitchComponent extends HTMLElement {
     constructor() {
         super()
-        const messages = this.getAttribute('messages')
+        const messages = this.getAttribute('messages').split(',')
         const shadow = this.attachShadow({mode:'open'})
         const animatioHandler = new SwitchAnimationHandler()
         this.cards = this.messages.map((message)=>new Card(message,animatioHandler))
@@ -40,6 +40,7 @@ class Card {
         const context = canvas.getContext('2d')
         context.fillStyle = '#2196F3'
         context.fillRect(0,0,w,w)
+        context.fillStyle = '#FF5722'
         context.save()
         context.translate(w/2,w/2)
         context.scale(this.scale,this.scale)
