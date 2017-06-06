@@ -21,13 +21,14 @@ class Card {
         this.img.onmousedown = (event)=>{
             if(this.scale == 0 && this.dir == 0) {
                 this.dir = 1
+
             }
         }
     }
     addToShadow(shadow) {
         shadow.appendChild(this.img)
     }
-    draw() {
+    render() {
         const canvas = document.createElement('canvas')
         canvas.width = Math.max(w,h)/10
         canvas.height = Math.max(w,h)/10
@@ -59,5 +60,26 @@ class Card {
                 this.scale = 0
             }
         }
+    }
+}
+class SwitchAnimationHandler {
+    setCurrCard(card) {
+        if(this.currCard) {
+            this.prevCard = this.currCard
+            this.prevCard.setDir(-1)
+        }
+        this.currCard = card
+        const interval = setInterval(()=>{
+            this.currCard.render()
+            this.currCard.update()
+            if(this.prevCard) {
+                this.prevCard.render()
+                this.currCard.update()
+            }
+            if(this.currCard.stopped()) {
+                clearInterval(interval)
+            }
+
+        },100)
     }
 }
