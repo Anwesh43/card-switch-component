@@ -5,7 +5,10 @@ class CardSwitchComponent extends HTMLElement {
         const messages = this.getAttribute('messages').split(',')
         const shadow = this.attachShadow({mode:'open'})
         const animatioHandler = new SwitchAnimationHandler()
-        this.cards = this.messages.map((message)=>new Card(message,animatioHandler))
+        this.cards = messages.map((message)=>new Card(message,animatioHandler))
+        this.cards.forEach((card)=>{
+            card.addToShadow(shadow)
+        })
     }
     render() {
         this.cards.forEach((card)=>{
@@ -19,6 +22,9 @@ class CardSwitchComponent extends HTMLElement {
 class Card {
     constructor(message,animatioHandler) {
         this.img = document.createElement('img')
+        this.img.style.float = 'top'
+        this.img.style.border = '2px dotted white'
+        this.img.style.borderRadius = '20%'
         this.message = message
         this.scale = 0
         this.dir = 0
@@ -34,11 +40,12 @@ class Card {
     }
     render() {
         const canvas = document.createElement('canvas')
-        canvas.width = Math.max(w,h)/10
-        canvas.height = Math.max(w,h)/10
+        const dw = window.innerWidth,dh = window.innerHeight
+        canvas.width = Math.max(dw,dh)/7
+        canvas.height = Math.max(dw,dh)/7
         const w = canvas.width
         const context = canvas.getContext('2d')
-        context.fillStyle = '#2196F3'
+        context.fillStyle = '#311B92'
         context.fillRect(0,0,w,w)
         context.fillStyle = '#FF5722'
         context.save()
@@ -59,7 +66,7 @@ class Card {
         if(this.scale > 1 || this.scale < 0) {
             this.dir = 0
             if(this.scale > 1) {
-                this.scale = 0
+                this.scale = 1
             }
             if(this.scale < 0) {
                 this.scale = 0
@@ -70,6 +77,7 @@ class Card {
 class SwitchAnimationHandler {
     setCurrCard(card) {
         if(this.currCard) {
+            //console.log("setting prevcard")
             this.prevCard = this.currCard
             this.prevCard.setDir(-1)
         }
@@ -79,13 +87,15 @@ class SwitchAnimationHandler {
             this.currCard.update()
             if(this.prevCard) {
                 this.prevCard.render()
-                this.currCard.update()
+                this.prevCard.update()
+                //console.log(this.prevCard)
             }
-            if(this.currCard.stopped()) {
+            if(this.currCard.stopped() == true) {
+                //console.log("stopped")
                 clearInterval(interval)
             }
 
-        },100)
+        },50)
     }
 }
 customElements.define('card-switch',CardSwitchComponent)
