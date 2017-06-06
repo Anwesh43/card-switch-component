@@ -4,16 +4,20 @@ class CardSwitchComponent extends HTMLElement {
         super()
         const messages = this.getAttribute('messages')
         const shadow = this.attachShadow({mode:'open'})
+        const animatioHandler = new SwitchAnimationHandler()
+        this.cards = this.messages.map((message)=>new Card(message,animatioHandler))
     }
     render() {
-
+        this.cards.forEach((card)=>{
+            card.render()
+        })
     }
     connectedCallback() {
         this.render()
     }
 }
 class Card {
-    constructor(message) {
+    constructor(message,animatioHandler) {
         this.img = document.createElement('img')
         this.message = message
         this.scale = 0
@@ -21,7 +25,7 @@ class Card {
         this.img.onmousedown = (event)=>{
             if(this.scale == 0 && this.dir == 0) {
                 this.dir = 1
-
+                animatioHandler.setCurrCard(this)
             }
         }
     }
@@ -83,3 +87,4 @@ class SwitchAnimationHandler {
         },100)
     }
 }
+customElements.define('card-switch',CardSwitchComponent)
